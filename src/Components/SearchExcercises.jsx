@@ -1,27 +1,27 @@
 import React,{useState,useEffect} from 'react'
 import {Box, Button, TextField, Typography, Stack} from '@mui/material';
 import {excerciseOptions, fetchData} from '../utils/fetchData';
+import HorizonalScrollbar from '../Components/HorizonalScrollbar';
 
-
-const SearchExcercise = () => {
+const SearchExcercise = (setExcercises, bodyPart, setBodyPart ) => {
     const [search, setSearch]=useState('')
-    const [excercises, setExcercises]=useState([])
     const [bodyParts,setBodyParts]=useState([])
     useEffect(() => {
         const fetchExcercisesData=async()=>{
-            const bodyPartsData=await fetchData('https://exercisedb.p.rapidapi.com/exercises',excerciseOptions)
+            const bodyPartsData=await fetchData('https://exercisedb.p.rapidapi.com/exercises/bodyPartList',excerciseOptions)
             setBodyParts(['all', ...bodyPartsData]);
-            //  if bodyPartsData is an array itself, the syntax creates a new array with the first element being the string "all", and then all the elements from bodyPartsData added after that.
+             //  if bodyPartsData is an array itself, the syntax creates a new array with the first element being the string "all", and then all the elements from bodyPartsData added after that.
             /*const other_data = ['apple', 'banana', 'orange'];
                     const arr = ['all', ...other_data];
                     console.log(arr); // Output: ['all', 'apple', 'banana', 'orange']
  */
         }
+        fetchExcercisesData();
     }, [])
     const handleSearch = async () =>{
         if(search){
             const excercisesData=await fetchData( 'https://exercisedb.p.rapidapi.com/exercises',excerciseOptions);
-            const searchedExcercises=excerciseData.fitler(
+            const searchedExcercises=excercisesData.filter(
                 (excercise)=> excercise.name.toLowerCase().includes(search)||
                   excercise.target.toLowerCase().includes(search)||
                  excercise.equipment.toLowerCase().includes(search)||
@@ -77,6 +77,9 @@ const SearchExcercise = () => {
                 
                 Search
             </Button>
+            </Box>
+            <Box sx={{position:'relative', width:'100%',p:'20px'}}>
+                <HorizonalScrollbar data={bodyParts}  bodyPart={bodyPart} setBodyPart={setBodyPart}/>
             </Box>
         </Stack>
         
